@@ -101,15 +101,55 @@ export const updateProfile =async (req,res) =>{
         if(!profilePic){
             return res.status(400).json({message:"please provide profile pic"})
         }
-        const uploadResponse = await cloudinary.uploader.upload(profilePic)
+        console.log("📤 Uploading profile picture to Cloudinary...");
+        const uploadResponse = await cloudinary.uploader.upload(profilePic, {
+            folder: "chatify/profiles",
+            resource_type: "auto",
+            max_file_size: 5242880 // 5MB limit
+        });
+
+        if (!uploadResponse || !uploadResponse.secure_url) {
+            return res.status(400).json({
+                success: false,
+                message: "Failed to upload image. Response missing secure_url."
+            });
+        }
+
+        console.log("✓ Image uploaded successfully:", uploadResponse.secure_url);
+        
         const updatedUser = await User.findByIdAndUpdate(userId,{"profilePic":uploadResponse.secure_url},{new:true})
         res.status(200).json(updatedUser)
 
 
         //this fn is about pfp
     } catch (error) {
-        console.log("Error in signup controller",error.message)
-        res.status(500).json({message:"Internal Server Error"})
+        console.error("❌ Error in updateProfile controller:", {
+            message: error.message,
+            code: error.http_code || "UNKNOWN",
+            status: error.status || "UNKNOWN"
+        });
+        
+        // Specific Cloudinary error handling
+        if (error.message.includes("Resource not found")) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid image URL or file type not supported",
+                error: error.message
+            });
+        }
+        
+        if (error.http_code === 413) {
+            return res.status(413).json({
+                success: false,
+                message: "File size exceeds 5MB limit"
+            });
+        }
+        
+        res.status(500).json({
+            success: false,
+            message: "Failed to upload profile picture",
+            error: process.env.NODE_ENV === "development" ? error.message : "Internal Server Error"
+        });
     }
 }
 export const checkAuth = (req, res) => {

@@ -5,16 +5,29 @@ import messageRoutes from "./routes/message.route.js"
 import dotenv from "dotenv"
 import { connectDB } from "./lib/db.js"
 import cookieParser from "cookie-parser"
+import path from "path"
 import cors from "cors"
 const app = express()
-
+const __dirname = path.resolve()
 dotenv.config()
 import { v2 as cloudinary } from "cloudinary";
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-});
+
+// Cloudinary Configuration with Error Handling
+try {
+    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+        throw new Error("Missing required Cloudinary environment variables: CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET");
+    }
+    cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET
+    });
+    console.log("✓ Cloudinary configured successfully");
+} catch (error) {
+    console.error("✗ Cloudinary configuration error:", error.message);
+    console.warn("⚠ Image uploads will fail. Please check your .env file.");
+}
+
 // Define Routing: You define how your application responds to client requests (like GET or POST) at specific endpoints using methods like app.get() or app.post()
 
 // Use Middleware: It allows you to add functions that can process requests before they reach your route handlers, such as app.use(express.json()) to parse incoming JSON data
@@ -32,6 +45,12 @@ app.use(cors(
 ))
 app.use("/api/auth",authRoutes)
 app.use("/api/message",messageRoutes)
+// if (process.env.NODE_ENV ==='production'){
+//     app.use(express.static(path.join(__dirname,"../frontend/dist")))
+//     app.get("*",(req,res)=>{
+//         res.sendFile(path.join(__dirname,"../frontend/dist/index.html"))
+//     })
+// }
 
 // Global error handling for JSON parse errors
 app.use((err, req, res, next) => {
