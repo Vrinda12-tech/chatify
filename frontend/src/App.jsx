@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage'
 import SettingPage from './pages/SettingPage'
 import { useAuthStore } from './store/useAuthStore'
 import { Navigate } from 'react-router-dom'
+import {Toaster} from "react-hot-toast"
 
 const App = () => {
   const {checkAuth,authUser,isCheckingAuth} =useAuthStore();
@@ -25,12 +26,13 @@ const App = () => {
     <div className='min-h-screen bg-slate-900 relative flex items-center justify-center p-4 overflow-hidden'>
       <Navbar/>
       <Routes>
-        <Route path ="/" element ={authUser? <HomePage/> :<Navigate to ="/login"/>}/>
-        <Route path ="/signup" element ={<SignUpPage/>}/>
-        <Route path ="/login" element ={<LoginPage/>}/>
+        <Route path ="/" element ={authUser? <HomePage/> :<Navigate to ={"/login"}/>}/>
+        <Route path ="/signup" element ={!authUser? <SignUpPage/>:<Navigate to ={"/"}/>}/>
+        <Route path ="/login" element ={!authUser ?<LoginPage/> :<Navigate to ={"/"}/>}/>
         <Route path ="/settings" element ={<SettingPage/>}/>
 
       </Routes>
+      <Toaster/>
 
     </div>
    

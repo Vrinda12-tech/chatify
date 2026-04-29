@@ -5,10 +5,11 @@ import messageRoutes from "./routes/message.route.js"
 import dotenv from "dotenv"
 import { connectDB } from "./lib/db.js"
 import cookieParser from "cookie-parser"
-import path from "path"
+
 import cors from "cors"
+// import cookieParser from "cookie-parser"
 const app = express()
-const __dirname = path.resolve()
+// const __dirname = path.resolve()
 dotenv.config()
 import { v2 as cloudinary } from "cloudinary";
 
