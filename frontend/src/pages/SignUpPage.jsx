@@ -4,6 +4,7 @@ import {useAuthStore} from "../store/useAuthStore.js"
 import BorderAnimatedContainer from "../components/BoaderAnimatedContainer.jsx"
 import {MessageCircleIcon,LockIcon,MailIcon,UserIcon,LoaderIcon} from "lucide-react"
 import { Link } from 'react-router-dom'
+import ParticleCanvas from '../components/ParticleCanvas.jsx'
 
 const SignUpPage = () => {
   const [formData, setformData] = useState({fullName:"",email:"",password:""});
@@ -15,6 +16,7 @@ const SignUpPage = () => {
   return (
     <div className='w-full flex items-center justify-center p-4 bg-slate-900'>
       <div className='relative w-full max-w-6xl md:h-[800px] h-[650px]'>
+        <ParticleCanvas quantity={70}>
         <BorderAnimatedContainer>
           <div className ="w-full flex flex-col md:flex-row">
             <div className='md:w-1/2 p-8 flex items-center justify-center md:border-r border-slate-600/30'>
@@ -83,7 +85,7 @@ const SignUpPage = () => {
             <div className='md:w-1/2 p-8 flex items-center justify-center bg-gradient-to-bl from-slate-800/20 to-transparent'>
               <div>
                 <img
-                  src="/signup.png"
+                  src="/signup_2.png"
                   alt="People using mobile devices"
                   className="w-full h-auto object-contain"
                 />
@@ -100,8 +102,8 @@ const SignUpPage = () => {
             </div>
 
           </div>
-
         </BorderAnimatedContainer>
+        </ParticleCanvas>
       </div>
 
     </div>
